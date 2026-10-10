@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zepto Clone - 10 Min Delivery</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header class="header">
+  <div class="logo">zepto</div>
+  <div class="deliver"><b>Delivery in 10 Mins</b><span><i class="fa fa-location-dot"></i> Delhi, India</span></div>
+  <div class="search"><i class="fa fa-search"></i><input id="searchInput" placeholder="Search for 'kurkure'"></div>
+  <button class="h-btn" id="myOrdersBtn"><i class="fa fa-box"></i> Orders</button>
+  <button class="h-btn" id="loginBtn"><i class="fa fa-user"></i> <span id="loginText">Login</span></button>
+  <button class="h-btn cart" id="cartBtn"><i class="fa fa-shopping-cart"></i> Cart <span id="cartCount">0</span></button>
+</header>
+
+<div class="hero">
+  <div class="hero-text"><h1>Grocery, Fashion & Electronics<br><span>in 10 Minutes</span></h1><p>Zepto Clone built by you — Fast, Fresh & Affordable</p></div>
+  <img src="images/banner.jpg" onerror="this.src='https://cdn.zeptonow.com/web-static-assets-prod/artifacts/12.70.0/images/pouch-image.png'">
+</div>
+
+<div class="cats">
+  <button class="cat active" data-cat="all">All</button>
+  <button class="cat" data-cat="Fruits"><i class="fa fa-apple-whole"></i> Fruits</button>
+  <button class="cat" data-cat="Vegetables"><i class="fa fa-carrot"></i> Vegetables</button>
+  <button class="cat" data-cat="Cloth"><i class="fa fa-shirt"></i> Cloth</button>
+  <button class="cat" data-cat="Electronics"><i class="fa fa-headphones"></i> Electronics</button>
+  <button class="cat" data-cat="Shoes"><i class="fa fa-shoe-prints"></i> Shoes</button>
+</div>
+
+<div class="products" id="products"></div>
+
+<!-- CART -->
+<div class="drawer" id="cartDrawer">
+  <div class="d-head"><h3>My Cart</h3><button class="close" id="closeCart">&times;</button></div>
+  <div class="d-body" id="cartItems"></div>
+  <div class="d-foot"><div class="bill"><span>To Pay</span><b>₹<span id="cartTotal">0</span></b></div><button class="main-btn" id="orderBtn">Checkout <i class="fa fa-arrow-right"></i></button></div>
+</div>
+
+<!-- MODALS -->
+<div class="modal" id="loginModal"><div class="modal-box"><button class="close" id="closeLogin">&times;</button><h2>Welcome Back</h2><p>Login to place orders</p><input id="loginEmail" placeholder="Email"><input id="loginPass" type="password" placeholder="Password"><button class="main-btn" id="doLogin">Login</button><p>No account? <span class="link" id="goSignup">Create one</span></p></div></div>
+<div class="modal" id="signupModal"><div class="modal-box"><button class="close" id="closeSignup">&times;</button><h2>Create Account</h2><input id="signupName" placeholder="Full Name"><input id="signupEmail" placeholder="Email"><input id="signupPass" type="password" placeholder="Password"><button class="main-btn" id="doSignup">Sign Up</button><p>Have account? <span class="link" id="goLogin">Login</span></p></div></div>
+<div class="modal" id="orderModal"><div class="modal-box"><button class="close" id="closeOrder">&times;</button><h2>Delivery Details</h2><input id="address" placeholder="Full Address, Delhi"><h4>Payment</h4><div class="pay-options"><label><input type="radio" name="pay" value="COD" checked> Cash on Delivery</label><label><input type="radio" name="pay" value="UPI"> UPI / GPay</label><label><input type="radio" name="pay" value="Card"> Card</label></div><h3>Total: ₹<span id="payTotal">0</span></h3><button class="main-btn" id="payBtn">Pay & Place Order</button></div></div>
+<div class="modal" id="myOrdersModal"><div class="modal-box" style="width:440px;max-width:95vw"><button class="close" id="closeMyOrders">&times;</button><h2>My Orders</h2><div id="ordersList" style="max-height:65vh;overflow:auto;display:flex;flex-direction:column;gap:12px;margin-top:10px"></div></div></div>
+
+<script src="script.js"></script>
+</body>
+</html>
