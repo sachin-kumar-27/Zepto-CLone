@@ -1,107 +1,36 @@
-// YAHAN IMAGES FOLDER KA USE HO RAHA HAI
-// images/ folder me ye files rakhna: apple.jpg, banana.jpg, tomato.jpg, potato.jpg, tshirt.jpg, jeans.jpg, earbuds.jpg, watch.jpg, nike.jpg, sneakers.jpg, banner.jpg
-const productsData = [
-{id:1,name:"Apple Shimla 1kg",price:149,cat:"Fruits",img:"images/apple.jpg"},
-{id:2,name:"Banana Robusta Dozen",price:60,cat:"Fruits",img:"images/banana.jpg"},
-{id:3,name:"Tomato Local 1kg",price:35,cat:"Vegetables",img:"images/tomato.jpg"},
-{id:4,name:"Potato 1kg",price:32,cat:"Vegetables",img:"images/potato.jpg"},
-{id:5,name:"Men Regular T-Shirt",price:399,cat:"Cloth",img:"images/tshirt.jpg"},
-{id:6,name:"Men Slim Jeans",price:999,cat:"Cloth",img:"images/jeans.jpg"},
-{id:7,name:"Wireless Earbuds",price:1299,cat:"Electronics",img:"images/earbuds.jpg"},
-{id:8,name:"Smart Watch Series 8",price:1999,cat:"Electronics",img:"images/watch.jpg"},
-{id:9,name:"Nike Air Shoes",price:2999,cat:"Shoes",img:"images/nike.jpg"},
-{id:10,name:"Sneakers White",price:1999,cat:"Shoes",img:"images/sneakers.jpg"},
+const productsData=[
+{id:1,name:"Apple Shimla 1kg - Fresh",price:149,old:199,cat:"Fruits",img:"https://images.unsplash.com/photo-1568702846914-96b305d2aa34?w=500"},
+{id:2,name:"Banana Robusta 1 Dozen",price:60,old:80,cat:"Fruits",img:"https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500"},
+{id:3,name:"Tomato Local Fresh 1kg",price:35,old:50,cat:"Vegetables",img:"https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500"},
+{id:4,name:"Potato Fresh 1kg",price:32,old:45,cat:"Vegetables",img:"https://images.unsplash.com/photo-1518977676608-bd36c2ca4f0d?w=500"},
+{id:5,name:"Men Cotton T-Shirt - Black",price:399,old:799,cat:"Cloth",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"},
+{id:6,name:"Men Slim Fit Denim Jeans",price:999,old:1999,cat:"Cloth",img:"https://images.unsplash.com/photo-1542272604-787c3835535d?w=500"},
+{id:7,name:"Wireless Bluetooth Earbuds",price:1299,old:2999,cat:"Electronics",img:"https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500"},
+{id:8,name:"Smart Watch Series 8 Pro",price:1999,old:3999,cat:"Electronics",img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500"},
+{id:9,name:"Nike Air Max Running Shoes",price:2999,old:5999,cat:"Shoes",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"},
+{id:10,name:"White Sneakers - Unisex",price:1999,old:3499,cat:"Shoes",img:"https://images.unsplash.com/photo-1603808033176-9d1343925734?w=500"},
 ];
-
-let cart=JSON.parse(localStorage.getItem("cart")||"[]");
-let user=JSON.parse(localStorage.getItem("user")||"null");
-let orders=JSON.parse(localStorage.getItem("orders")||"[]");
-const pDiv=document.getElementById("products");
-const cartDrawer=document.getElementById("cartDrawer"), loginModal=document.getElementById("loginModal"), signupModal=document.getElementById("signupModal"), orderModal=document.getElementById("orderModal"), myOrdersModal=document.getElementById("myOrdersModal");
-
-function render(list){
- pDiv.innerHTML="";
- list.forEach(p=> pDiv.innerHTML+=`<div class="card"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/300x300?text=${encodeURIComponent(p.name)}'"><h4>${p.name}</h4><p class="price">₹${p.price}</p><button class="add" onclick="addCart(${p.id})">ADD</button></div>`);
-}
-function addCart(id){
- let f=cart.find(c=>c.id===id);
- if(f) f.qty++; else cart.push({...productsData.find(p=>p.id===id),qty:1});
- updateCart(); cartDrawer.classList.add("open");
-}
-function updateCart(){
- localStorage.setItem("cart",JSON.stringify(cart));
- let total=0,count=0,html="";
- cart.forEach(i=>{total+=i.price*i.qty;count+=i.qty; html+=`<div class="c-item"><span>${i.name} x ${i.qty}</span><b>₹${i.price*i.qty}</b></div>`});
- document.getElementById("cartCount").innerText=count;
- document.getElementById("cartTotal").innerText=total;
- document.getElementById("payTotal").innerText=total;
- document.getElementById("cartItems").innerHTML= html || "<p style='text-align:center;margin-top:30px;color:#999'>Your cart is empty<br>Add items to checkout</p>";
-}
-function renderOrders(){
- let listDiv=document.getElementById("ordersList");
- if(orders.length===0){ listDiv.innerHTML="<p style='text-align:center;color:#999'>No orders yet. Place your first order!</p>"; return;}
- listDiv.innerHTML="";
- orders.slice().reverse().forEach(o=>{
-  let statusClass = o.status==="Cancelled"? "status-cancelled" : "status-placed";
-  listDiv.innerHTML+=`<div class="order-card"><div style="display:flex;justify-content:space-between"><h4>Order #${o.id.toString().slice(-6)}</h4><small style="color:#999">${o.date||''}</small></div><span class="order-status ${statusClass}">${o.status}</span><p style="font-size:13px;margin:6px 0;color:#444">${o.items.map(i=>i.name+" x "+i.qty).join(", ")}</p><p style="font-size:13px"><b>₹${o.total}</b> • ${o.payment}</p><p style="font-size:12px;color:#666">${o.address}</p>${o.status!=="Cancelled"? `<button class="cancel-btn" onclick="cancelOrder(${o.id})">Cancel Order</button>` : ""}</div>`;
- });
-}
-window.cancelOrder=(id)=>{
- if(!confirm("Are you sure you want to cancel this order?")) return;
- let ord=orders.find(o=>o.id===id);
- if(ord){ ord.status="Cancelled"; localStorage.setItem("orders",JSON.stringify(orders)); renderOrders();}
-};
-
-document.getElementById("cartBtn").onclick=()=>cartDrawer.classList.add("open");
-document.getElementById("closeCart").onclick=()=>cartDrawer.classList.remove("open");
-document.getElementById("searchInput").oninput=(e)=>{
- let q=e.target.value.toLowerCase();
- render(productsData.filter(p=>p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q)));
-};
-document.querySelectorAll(".cat").forEach(b=>{
- b.onclick=()=>{
-  document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");
-  if(b.dataset.cat==="all") render(productsData);
-  else render(productsData.filter(p=>p.cat===b.dataset.cat));
- };
-});
-document.getElementById("loginBtn").onclick=()=>{
- if(user){ if(confirm(`Logged in as ${user.name}\nLogout?`)){ localStorage.removeItem("user"); location.reload(); } return; }
- loginModal.classList.add("open");
-};
-document.getElementById("closeLogin").onclick=()=>loginModal.classList.remove("open");
-document.getElementById("closeSignup").onclick=()=>signupModal.classList.remove("open");
-document.getElementById("goSignup").onclick=()=>{loginModal.classList.remove("open"); signupModal.classList.add("open");};
-document.getElementById("goLogin").onclick=()=>{signupModal.classList.remove("open"); loginModal.classList.add("open");};
-document.getElementById("doLogin").onclick=()=>{
- let email=document.getElementById("loginEmail").value;
- let saved=JSON.parse(localStorage.getItem("user"));
- if(saved && saved.email===email){ user=saved; loginModal.classList.remove("open"); document.getElementById("loginText").innerText=saved.name.split(" ")[0]; alert("Login Success");}
- else alert("User not found! Please Sign Up first");
-};
-document.getElementById("doSignup").onclick=()=>{
- let name=document.getElementById("signupName").value, email=document.getElementById("signupEmail").value, pass=document.getElementById("signupPass").value;
- if(!name||!email||!pass) return alert("Fill all fields");
- localStorage.setItem("user",JSON.stringify({name,email,pass})); alert("Account created! Now Login"); signupModal.classList.remove("open"); loginModal.classList.add("open");
-};
-document.getElementById("orderBtn").onclick=()=>{
- if(cart.length===0) return alert("Cart empty!");
- if(!user) return alert("Please Login first!"), loginModal.classList.add("open");
- orderModal.classList.add("open");
-};
+let cart=JSON.parse(localStorage.getItem("cart")||"[]"),user=JSON.parse(localStorage.getItem("user")||"null"),orders=JSON.parse(localStorage.getItem("orders")||"[]");
+const pDiv=document.getElementById("products"),cartDrawer=document.getElementById("cartDrawer"),overlay=document.getElementById("overlay");
+const loginModal=document.getElementById("loginModal"),signupModal=document.getElementById("signupModal"),orderModal=document.getElementById("orderModal"),myOrdersModal=document.getElementById("myOrdersModal");
+function render(list){pDiv.innerHTML="";list.forEach(p=>{let inCart=cart.find(c=>c.id===p.id);pDiv.innerHTML+=`<div class="card"><img src="${p.img}" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=No+Image'"><h4>${p.name}</h4><div><span class="price">₹${p.price}</span><span class="old">₹${p.old}</span></div><button class="add ${inCart?'added':''}" onclick="addCart(${p.id})">${inCart?'Added x'+inCart.qty:'ADD'}</button></div>`});}
+function addCart(id){let f=cart.find(c=>c.id===id);if(f) f.qty++; else cart.push({...productsData.find(p=>p.id===id),qty:1});updateCart();openCart();}
+function openCart(){cartDrawer.classList.add("open");overlay.classList.add("open")}function closeCart(){cartDrawer.classList.remove("open");overlay.classList.remove("open")}
+function updateCart(){localStorage.setItem("cart",JSON.stringify(cart));let total=0,count=0,html="";cart.forEach(i=>{total+=i.price*i.qty;count+=i.qty;html+=`<div class="c-item"><span>${i.name}<br><small>Qty: ${i.qty}</small></span><b>₹${i.price*i.qty}</b></div>`});document.getElementById("cartCount").innerText=count;document.getElementById("cartCount2").innerText=count;document.getElementById("cartTotal").innerText=total;document.getElementById("payTotal").innerText=total;document.getElementById("cartItems").innerHTML=html||"<p style='text-align:center;margin-top:40px;color:#999'>Your cart is empty<br>Add items to see here</p>";render(productsData.filter(p=>document.querySelector(".cat.active").dataset.cat==="all"||p.cat===document.querySelector(".cat.active").dataset.cat));}
+function renderOrders(){let l=document.getElementById("ordersList");if(!orders.length){l.innerHTML="<p style='text-align:center;color:#999;padding:20px'>No orders yet. Place one!</p>";return}l.innerHTML="";orders.slice().reverse().forEach(o=>{let sc=o.status==="Cancelled"?"status-cancelled":"status-placed";l.innerHTML+=`<div class="order-card"><div style="display:flex;justify-content:space-between"><b>#${o.id.toString().slice(-6)}</b><small style="color:#999">${o.date}</small></div><span class="order-status ${sc}">${o.status}</span><p style="font-size:13px;margin:6px 0;color:#444">${o.items.map(i=>i.name+" x "+i.qty).join(", ")}</p><p><b>₹${o.total}</b> • ${o.payment}</p><p style="font-size:12px;color:#666">${o.address}</p>${o.status!=="Cancelled"?`<button class="cancel-btn" onclick="cancelOrder(${o.id})">Cancel Order</button>`:""}</div>`});}
+window.cancelOrder=id=>{if(!confirm("Cancel this order?")) return;let o=orders.find(x=>x.id===id);if(o){o.status="Cancelled";localStorage.setItem("orders",JSON.stringify(orders));renderOrders();}};
+// EVENTS
+document.getElementById("cartBtn").onclick=openCart;document.getElementById("closeCart").onclick=closeCart;overlay.onclick=closeCart;
+document.getElementById("searchInput").oninput=e=>{let q=e.target.value.toLowerCase();render(productsData.filter(p=>p.name.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)))};
+document.querySelectorAll(".cat").forEach(b=>{b.onclick=()=>{document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(b.dataset.cat==="all") render(productsData); else render(productsData.filter(p=>p.cat===b.dataset.cat));}});
+document.getElementById("loginBtn").onclick=()=>{if(user){if(confirm(`Logged in as ${user.name}\nLogout?`)){localStorage.removeItem("user");location.reload()}return}loginModal.classList.add("open")};
+document.getElementById("closeLogin").onclick=()=>loginModal.classList.remove("open");document.getElementById("closeSignup").onclick=()=>signupModal.classList.remove("open");
+document.getElementById("goSignup").onclick=()=>{loginModal.classList.remove("open");signupModal.classList.add("open")};document.getElementById("goLogin").onclick=()=>{signupModal.classList.remove("open");loginModal.classList.add("open")};
+document.getElementById("doLogin").onclick=()=>{let e=document.getElementById("loginEmail").value;let s=JSON.parse(localStorage.getItem("user"));if(s&&s.email===e){user=s;localStorage.setItem("user",JSON.stringify(user));loginModal.classList.remove("open");document.getElementById("loginText").innerText=s.name.split(" ")[0]}else alert("Please Sign Up first")};
+document.getElementById("doSignup").onclick=()=>{let n=document.getElementById("signupName").value,e=document.getElementById("signupEmail").value,p=document.getElementById("signupPass").value;if(!n||!e||!p) return alert("Fill all");localStorage.setItem("user",JSON.stringify({name:n,email:e,pass:p}));alert("Signup done! Now login");signupModal.classList.remove("open");loginModal.classList.add("open")};
+document.getElementById("orderBtn").onclick=()=>{if(!cart.length) return alert("Cart empty");if(!user) return alert("Login first"),loginModal.classList.add("open");orderModal.classList.add("open")};
 document.getElementById("closeOrder").onclick=()=>orderModal.classList.remove("open");
-document.getElementById("myOrdersBtn").onclick=()=>{ if(!user) return alert("Please Login to see orders"), loginModal.classList.add("open"); renderOrders(); myOrdersModal.classList.add("open"); };
+document.getElementById("myOrdersBtn").onclick=()=>{if(!user) return alert("Login to see orders"),loginModal.classList.add("open");renderOrders();myOrdersModal.classList.add("open")};
 document.getElementById("closeMyOrders").onclick=()=>myOrdersModal.classList.remove("open");
-document.getElementById("payBtn").onclick=()=>{
- let addr=document.getElementById("address").value;
- if(!addr) return alert("Enter address");
- let mode=document.querySelector('input[name="pay"]:checked').value;
- let newOrder={id:Date.now(), items:[...cart], total:document.getElementById("payTotal").innerText, address:addr, payment:mode, status:"Placed", date:new Date().toLocaleString()};
- orders.push(newOrder);
- localStorage.setItem("orders",JSON.stringify(orders));
- alert(`Order Placed Successfully!\nID: ${newOrder.id}`);
- cart=[]; updateCart(); orderModal.classList.remove("open"); cartDrawer.classList.remove("open");
-};
-render(productsData); updateCart();
-if(user) document.getElementById("loginText").innerText=user.name.split(" ")[0];
+document.getElementById("payBtn").onclick=()=>{let a=document.getElementById("address").value;if(!a) return alert("Enter address");let m=document.querySelector('input[name="pay"]:checked').value;let o={id:Date.now(),items:[...cart],total:document.getElementById("payTotal").innerText,address:a,payment:m,status:"Placed",date:new Date().toLocaleString()};orders.push(o);localStorage.setItem("orders",JSON.stringify(orders));alert(`Order Placed! ID #${o.id.toString().slice(-6)}`);cart=[];updateCart();orderModal.classList.remove("open");closeCart();};
+render(productsData);updateCart();if(user) document.getElementById("loginText").innerText=user.name.split(" ")[0];
